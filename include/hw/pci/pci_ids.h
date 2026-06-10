@@ -237,6 +237,8 @@
 #define PCI_VENDOR_ID_BAIDU              0x1d22
 #define PCI_DEVICE_ID_KUNLUN_VF          0x3685
 
+#define PCI_VENDOR_ID_TENSTORRENT        0x1e52
+
 #define PCI_VENDOR_ID_INTEL              0x8086
 #define PCI_DEVICE_ID_INTEL_82378        0x0484
 #define PCI_DEVICE_ID_INTEL_82441        0x1237

@@ -2,6 +2,12 @@
 QEMU README
 ===========
 
+.. note::
+
+   This is the Tenstorrent ``ttsim`` fork of QEMU. For fork-specific details
+   (the ``ttsim`` device, build/use instructions, and licensing), see
+   ``README.ttsim.md``.
+
 QEMU is a generic and open source machine & userspace emulator and
 virtualizer.
 
