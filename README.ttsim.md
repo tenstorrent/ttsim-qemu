@@ -27,6 +27,32 @@ qemu-system-x86_64 -device ttsim,lib=/path/to/libttsim.so ...
 Only x86_64 (i386-softmmu) and aarch64 are wired up today; other targets can
 enable `CONFIG_TTSIM` in their device config later.
 
+### Multiple MMIO chips
+
+A multi-chip libttsim (e.g. `wh_x32`, `bh_x32`, or the 4-MMIO `wh_x8`) presents
+several host-visible chips through one process-wide library. Add one
+`-device ttsim` per MMIO chip, all pointing at the same `libttsim.so`; they share
+the single loaded library and each surfaces as its own PCI device (and, in the
+guest, its own `/dev/tenstorrent/N`):
+
+```sh
+qemu-system-x86_64 \
+    -device ttsim,lib=/path/to/libttsim.so,bar4-size=32M \
+    -device ttsim,lib=/path/to/libttsim.so,bar4-size=32M \
+    ...   # repeat NUM_MMIO_CHIPS times
+```
+
+Each device claims the lowest free chip number by default; pass `index=N` to pin
+a specific one. Specifying more devices than the library exposes, an
+out-of-range `index`, or a duplicate `index` is a startup error.
+
+**Limitation:** simulator-initiated DMA carries no chip identity in the current
+libttsim ABI, so it is routed through one representative device's address space.
+This is correct for a flat guest, but with a per-device vIOMMU
+(`iommu=smmuv3` / `intel-iommu`) in translated mode, DMA from non-representative
+chips may translate in the wrong context; use IOMMU passthrough for multi-chip
+DMA until the callback gains a chip parameter.
+
 libttsim is a separate project: <https://github.com/tenstorrent/ttsim>
 
 ## Licensing
